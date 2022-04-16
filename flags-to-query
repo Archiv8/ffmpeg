@@ -1,0 +1,45 @@
+libopenvino https://docs.openvino.ai/latest/index.html
+librist https://code.videolan.org/rist/librist
+libshaderc https://github.com/google/shaderc
+libtensorflow https://www.tensorflow.org/
+libtls
+  --enable-mbedtls
+--enable-mediacode
+--enable-mediafoundation
+ --disable-metal
+ --disable-schannel
+   --enable-cuda-nvcc
+   --disable-cuda-llvm
+   --disable-cuvid \
+
+   --disable-ffnvcodec \
+     --disable-d3d11va
+      --disable-dxva2
+      --disable-ffnvcodec
+      --enable-mmal
+       --disable-nvdec
+       --disable-nvenc
+         --enable-omx
+          --enable-rkmpp
+          --disable-v4l2-m2m
+
+
+
+         --disable-mbedtls \
+        --disable-mediacodec \
+        --disable-mediafoundation \
+        --disable-metal \
+        --disable-openssl \
+        --disable-schannel \
+        --disable-securetransport \
+
+         --disable-audiotoolbox
+                 --disable-cuvid \
+        --disable-d3d11va \
+        --disable-dxva2 \
+                --disable-libmfx \
+        --disable-libnpp \
+        --enable-mmal
+        --disable-omx-rpi \
+        --disable-rkmpp \
+        --disable-videotoolbox
