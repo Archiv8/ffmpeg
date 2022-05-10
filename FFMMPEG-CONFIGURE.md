@@ -1,6 +1,9 @@
-# FFmpeg Configure Options
+# FFmpeg Configure Options: Version 5.0
+
+```bash
 
 ./configure --help
+```
 
 Usage: configure [options]
 Options: [defaults in brackets after descriptions]
