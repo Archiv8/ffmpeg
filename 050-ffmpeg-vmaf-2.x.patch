@@ -1,5 +1,3 @@
-diff --git a/configure b/configure
-index 94f513288a..493493b4c5 100755
 --- a/configure
 +++ b/configure
 @@ -3751,7 +3751,7 @@ vaguedenoiser_filter_deps="gpl"
@@ -20,8 +18,6 @@ index 94f513288a..493493b4c5 100755
  enabled libvo_amrwbenc    && require libvo_amrwbenc vo-amrwbenc/enc_if.h E_IF_init -lvo-amrwbenc
  enabled libvorbis         && require_pkg_config libvorbis vorbis vorbis/codec.h vorbis_info_init &&
                               require_pkg_config libvorbisenc vorbisenc vorbis/vorbisenc.h vorbis_encode_init
-diff --git a/doc/filters.texi b/doc/filters.texi
-index 248c09caf8..9a890d1555 100644
 --- a/doc/filters.texi
 +++ b/doc/filters.texi
 @@ -14666,68 +14666,60 @@ ffmpeg -i input.mov -vf lensfun=make=Canon:model="Canon EOS 100D":lens_model="Ca
@@ -158,8 +154,6 @@ index 248c09caf8..9a890d1555 100644
  @end example
  @end itemize
  
-diff --git a/libavfilter/vf_libvmaf.c b/libavfilter/vf_libvmaf.c
-index 5d492126eb..eee1c280ef 100644
 --- a/libavfilter/vf_libvmaf.c
 +++ b/libavfilter/vf_libvmaf.c
 @@ -24,8 +24,8 @@

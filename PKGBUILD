@@ -4,7 +4,6 @@
 # Repository rules should be added to the .shellcheckrc file located in the
 # repository root directory, see https://github.com/koalaman/shellcheck/wiki
 # and https://archiv8.github.io for further information.
-# shellcheck disable=SC2034,SC2154
 
 # [Note]: Intel only option: libmfx
 # [Note]: The nvidia Cg toolkit is no longer actively maintained and therefore not enabled in build. Latest update April 2012.  See https://developer.nvidia.com/cg-toolkit.  Suggested alternative,
@@ -23,9 +22,9 @@
 # [ToDo]: Ensure licenses are up to date
 # [ToDo]: Create split package to allow, for example, amd, intel, nvidia  only installs
 # [ToDo]: Split depends between "depends", "makedepends" and "optdepends" fields
-# [Query]: Option --enable-avresample does not appear to be a valid configuration option and throws error on configure. See ./configure --help
-# [Query]: Option --enable-libsvthevc does not appear to be a valid configuration option and throws error on configure. See ./configure --help
-# [Query]: Option --enable-libsvtvp9 does not appear to be a valid configuration option and throws error on configure. See ./configure --help
+# [Query]: Option "enable-avresample" does not appear to be a valid configuration option and throws error on configure. See ./configure --help
+# [Query]: Option "enable-libsvthevc" does not appear to be a valid configuration option and throws error on configure. See ./configure --help
+# [Query]: Option "enable-libsvtvp9" does not appear to be a valid configuration option and throws error on configure. See ./configure --help
 # [Query]: What provides libopencv. Currently disabled
 # [Query]: What provides libopenvino. Currently disabled
 # [Query]: What provides libtensorflow. Currently disabled
@@ -38,11 +37,12 @@
 # Maintainer: Ross Clark <https://github.com/Archiv8/ffmpeg/discussions>
 # Contributor: Ross Clark <https://github.com/Archiv8/ffmpeg/discussions>
 
-_relname=ffmpeg
+_svt_hevc_ver="b62f72e752243cee4104cfb41dc7ee409d3ac3e9"
+_svt_vp9_ver="d9ef3cc13159143b9afc776c04f67cdfa6284046"
 
-pkgname=${_relname}
-pkgver=5.0
-pkgrel=16
+pkgname=ffmpeg
+pkgver=5.1
+pkgrel=1
 pkgdesc="A complete solution to record, convert and stream audio and video (all possible features for AMD)"
 arch=("x86_64")
 url="https://www.ffmpeg.org/"
@@ -75,7 +75,7 @@ depends=(
   "kvazaar"
   "ladspa"
   "lame"
-  "lensfun"
+  "lcms2"
   "libass"
   "libavc1394"
   "libbluray"
@@ -90,11 +90,13 @@ depends=(
   "libgme"
   "libiec61883"
   "libilbc"
+  "libjxl"
   "libmfx"
   "libmodplug"
   "libmysofa"
   "libomxil-bellagio"
   "libopenmpt"
+  "libplacebo"
   "libpulse"
   "librabbitmq-c"
   "libraw1394"
@@ -152,13 +154,13 @@ depends=(
   "zimg"
   "zlib"
   "zvbi"
-
   # "openvino"
 
   # Archiv8 / AUR
   "davs2"
   # [Fixed]:  2022/05/03 FFMpeg requires shared libraries that are not included within the official, Arch Linux, flite packages. See https://github.com/Archiv8/flite to get flite-full.
   "flite-all"
+  "lensfun"
   "libklvanc"
   "openh264"
   "librist"
@@ -167,7 +169,6 @@ depends=(
   "vo-amrwbenc"
   "xavs"
   "xavs2"
-  "lensfun"
 )
 makedepends=(
   # Arch Linux official repositories
@@ -175,15 +176,16 @@ makedepends=(
 
   # "amf-headers"
   # "clang"
-  #  "ffnvcodec-headers"
-  #   "nasm"
+  # "ffnvcodec-headers"
+  # "nasm"
   # "opencl-headers"
-  #  "vulkan-headers"
+  # "vulkan-headers"
 
   # Archiv8 / AUR
   "decklink-sdk"
 )
 provides=(
+  "ffmpeg"
   "libavcodec.so"
   "libavdevice.so"
   "libavfilter.so"
@@ -194,40 +196,80 @@ provides=(
   "libswscale.so"
   "libswresample.so"
 )
-_tag=390d6853d0ef408007feb39c0040682c81c02751
 # options=(
 #   "debug"
 # )
 source=(
-  "$_relname-$pkgver::git+https://git.ffmpeg.org/ffmpeg.git#tag=${_tag}"
-  "ffmpeg-vmaf2.x.patch"
-  "add-av_stream_get_first_dts-for-chromium.patch"
+  "https://ffmpeg.org/releases/ffmpeg-${pkgver}.tar.xz"{,.asc}
+  "010-ffmpeg-add-svt-hevc-g${_svt_hevc_ver:0:7}.patch"::"https://raw.githubusercontent.com/OpenVisualCloud/SVT-HEVC/${_svt_hevc_ver}/ffmpeg_plugin/master-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch"
+  "020-ffmpeg-add-svt-hevc-docs-g${_svt_hevc_ver:0:7}.patch"::"https://raw.githubusercontent.com/OpenVisualCloud/SVT-HEVC/${_svt_hevc_ver}/ffmpeg_plugin/0002-doc-Add-libsvt_hevc-encoder-docs.patch"
+  "030-ffmpeg-add-svt-vp9-g${_svt_vp9_ver:0:7}.patch"::"https://raw.githubusercontent.com/OpenVisualCloud/SVT-VP9/${_svt_vp9_ver}/ffmpeg_plugin/master-0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch"
+  "040-ffmpeg-add-av_stream_get_first_dts-for-chromium.patch"
+  # "050-ffmpeg-vmaf-2.x.patch"
+  "060-ffmpeg-fix-segfault-with-avisynthplus.patch"
+  # "070-ffmpeg-libsvtav1-0.9.0-part1.patch"::"https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/c33b4048859a191acf9b6aa22acaea248a4eb18f"
+  # "080-ffmpeg-libsvtav1-0.9.0-part2.patch"::"https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/1dddb930aaf0cadaa19f86e81225c9c352745262"
 )
 sha512sums=(
+  '9ba24f7488d1c7f8a3e3fbc3920e329724e75631d769400998f7a0858c58213f2eee2880fdd7caa9a701150217448a834b5008840327478314e4508c5e0e3b19'
   'SKIP'
-  'f775e35465f6487b50e1e5f36c70946ee03db448bc2970c5b4b697565fa380c4a61d8a7bed0cbb89a54b1118a2f097cf4a27290d632575c524876beeff448f5a'
-  'bb23ce619dc98f341ded7e269dd703074d6fb5aa28bd71ba1f62bc4c02e471bf57d99aa47d57993596ffe7aa65fbb410410082705dd203839bb0992975f1fede'
+  '81d94885a8442527ffe8dc76bd68ac93983790c8e6a984016481f3b38c4e0bcfb3d7f53b1a511ac85c347f196c33a10a14f1115ffd5708a12cafa89bb1176e28'
+  '86ba78179084d02adafa599a25b8c9880a788db3007c49a16f1bcc81c022fd3d63cbe68bfea185934205d00d004c5b1b7d749679318d5b7cf0bd2c9a1892e167'
+  '34cf3210192bc963ea9f2ec207a3c7680483d18922712757426f822bbdae62e6bfa92512d27b9314ca671a66632f7a58138a29144ac590d262e5235bde33e8ea'
+  'b144d4a68b2cdd4ba8d0fcff34fb93abd17daf016799376ca47a5882251aca4a166202f2680dddad10ec011da93d4257810c5ec57712faf592f89bd6ed512fbe'
+  'd3d59ff6285b4a9c7d905ec46136928fa7207c47b5a21011a864a7323a421aa25667c8ecf15877f4070df3736039cd4b9834245cd5b32632a0705deb6f4338ab'
 )
 # validpgpkeys=(
 #     "FCF986EA15E6E293A5644F10B4322F04D67658D8"
 # )
 
 prepare() {
-  cd "$_relname-$pkgver"
-  #[Fixes]: avcodec/nvenc on older gpus. See https://github.com/FFmpeg/FFmpeg/commit/988f2e9eb063db7c1a678729f58aab6eba59a55b
-  git cherry-pick -n 988f2e9eb063db7c1a678729f58aab6eba59a55b
-  patch -Np1 -i ../ffmpeg-vmaf2.x.patch                           # vmaf 2.x support. See https://aur.archlinux.org/cgit/aur.git/tree/050-ffmpeg-vmaf-2.x.patch?h=ffmpeg-full
-  patch -Np1 -i ../add-av_stream_get_first_dts-for-chromium.patch # Fix chromium build failure on Chromium 94+. See, https://crbug.com/1251779
-}
 
-pkgver() {
-  cd "$_relname-$pkgver"
-  git describe --tags | sed 's/^n//'
+  cd "$pkgname-$pkgver"
+
+  # [Fixes]: avcodec/nvenc on older gpus. See https://github.com/FFmpeg/FFmpeg/commit/988f2e9eb063db7c1a678729f58aab6eba59a55b
+  # git cherry-pick -n 988f2e9eb063db7c1a678729f58aab6eba59a55b
+
+  # [Fixes]:
+  rm -f "ffmpeg-${pkgver}/libavcodec/"libsvt_{hevc,vp9}.c
+
+  # [Fixes]: AVCodecs are not modified any longer in ffmpeg for "lavc/svt_hevc" add "libsvt hevc" encoder wrapper
+  echo Patch 1 of 8
+  patch -d "${srcdir}/ffmpeg-${pkgver}" -Np1 -i "${srcdir}/010-ffmpeg-add-svt-hevc-g${_svt_hevc_ver:0:7}.patch"
+
+  # [Fixes]: Add docs for libsvt_hevc encoder in encoders.texi and general.texi
+  # [FixMe]: Patch fails with, "patch: **** malformed patch at line 177:  @section libtheora"
+  # echo Patch 2 of 8
+  # patch -d "${srcdir}/ffmpeg-${pkgver}" -Np1 -i "${srcdir}/020-ffmpeg-add-svt-hevc-docs-g${_svt_hevc_ver:0:7}.patch"
+
+  # [Fixes]: Add ability for ffmpeg to run svt vp9
+  echo Patch 3 of 8
+  patch -d "${srcdir}/ffmpeg-${pkgver}" -Np1 -i "${srcdir}/030-ffmpeg-add-svt-vp9-g${_svt_vp9_ver:0:7}.patch"
+
+  # [Fixes]: chromium build failure on Chromium 94+,add "av_stream_get_first_dts". See, https://crbug.com/1251779
+  echo Patch 4 of 8
+  patch -d "${srcdir}/ffmpeg-${pkgver}" -Np1 -i "${srcdir}/040-ffmpeg-add-av_stream_get_first_dts-for-chromium.patch"
+
+  # [Fixes]: vmaf 2.x support. See https://aur.archlinux.org/cgit/aur.git/tree/050-ffmpeg-vmaf-2.x.patch?h=ffmpeg-full
+  # echo Patch 5 of 8
+  # patch -d "${srcdir}/ffmpeg-${pkgver}" -Np1 -i "${srcdir}/050-ffmpeg-vmaf-2.x.patch"
+
+  # [Fixes]: Fix segmentation fault when using avisynth plus
+  echo Patch 6 of 8
+  patch -d "${srcdir}/ffmpeg-${pkgver}" -Np1 -i "${srcdir}/060-ffmpeg-fix-segfault-with-avisynthplus.patch"
+
+  # [Fixes]: Add a svtav1-params option to pass a list of key=value parameters
+  # echo Patch 7 of 8
+  # patch -d "${srcdir}/ffmpeg-${pkgver}" -Np1 -i "${srcdir}/070-ffmpeg-libsvtav1-0.9.0-part1.patch"
+
+  # [Fixes]: For "avcodec/libsvtav1" update some options and defaults
+  # echo Patch 8 of 8
+  # patch -d "${srcdir}/ffmpeg-${pkgver}" -Np1 -i "${srcdir}/080-ffmpeg-libsvtav1-0.9.0-part2.patch"
 }
 
 build() {
 
-  cd "$_relname-$pkgver"
+  cd "${srcdir}/$pkgname-$pkgver"
 
   printf "%s\n" "-> Running ffmpeg configure script..."
 
@@ -235,18 +277,15 @@ build() {
     --prefix="/usr" \
     --enable-logging \
     --disable-rpath \
-    \
     --enable-gpl \
     --enable-version3 \
     --enable-nonfree \
-    \
     --disable-static \
     --enable-shared \
     --disable-small \
     --enable-runtime-cpudetect \
     --enable-gray \
     --enable-swscale-alpha \
-    \
     --enable-autodetect \
     --enable-avdevice \
     --enable-avcodec \
@@ -263,13 +302,11 @@ build() {
     --enable-dwt \
     --enable-error-resilience \
     --enable-lsp \
-    --enable-lzo \
     --enable-mdct \
     --enable-rdft \
     --enable-fft \
     --enable-faan \
     --enable-pixelutils \
-    \
     --enable-alsa \
     --disable-appkit \
     --disable-avfoundation \
@@ -320,6 +357,7 @@ build() {
     --enable-libopenmpt \
     --disable-libopenvino \
     --enable-libopus \
+    --enable-libplacebo \
     --enable-libpulse \
     --enable-librabbitmq \
     --enable-librav1e \
@@ -383,7 +421,6 @@ build() {
     --enable-vulkan \
     --enable-xlib \
     --enable-zlib \
-    \
     --enable-amf \
     --disable-audiotoolbox \
     --enable-cuda-nvcc \
@@ -405,9 +442,7 @@ build() {
     --enable-vaapi \
     --enable-vdpau \
     --disable-videotoolbox \
-    \
     --enable-lto \
-    \
     --disable-debug \
     --disable-stripping
 
@@ -419,17 +454,17 @@ build() {
 }
 
 package() {
-  make -C "$_relname-$pkgver" DESTDIR="$pkgdir" install
+  make -C "$pkgname-$pkgver" DESTDIR="$pkgdir" install
 
-  install -D -m755 "$_relname-$pkgver/tools/qt-faststart" -t "${pkgdir}/usr/bin"
+  install -D -m755 "$pkgname-$pkgver/tools/qt-faststart" -t "${pkgdir}/usr/bin"
 
-  install -D -m644 "$_relname-$pkgver/LICENSE.md" -t "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -D -m644 "$pkgname-$pkgver/LICENSE.md" -t "${pkgdir}/usr/share/licenses/${pkgname}"
 
-  install -D -m644 "$_relname-$pkgver/COPYING.LGPLv2.1" -t "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -D -m644 "$pkgname-$pkgver/COPYING.LGPLv2.1" -t "${pkgdir}/usr/share/licenses/${pkgname}"
 
-  install -D -m644 "$_relname-$pkgver/COPYING.GPLv2" -t "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -D -m644 "$pkgname-$pkgver/COPYING.GPLv2" -t "${pkgdir}/usr/share/licenses/${pkgname}"
 
-  install -D -m644 "$_relname-$pkgver/COPYING.GPLv3" -t "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -D -m644 "$pkgname-$pkgver/COPYING.GPLv3" -t "${pkgdir}/usr/share/licenses/${pkgname}"
 
-  install -D -m644 "$_relname-$pkgver/COPYING.LGPLv3" -t "${pkgdir}/usr/share/licenses/${pkgname}"
+  install -D -m644 "$pkgname-$pkgver/COPYING.LGPLv3" -t "${pkgdir}/usr/share/licenses/${pkgname}"
 }
