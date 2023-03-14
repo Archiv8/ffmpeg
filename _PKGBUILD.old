@@ -42,8 +42,8 @@ _svt_vp9_ver="d9ef3cc13159143b9afc776c04f67cdfa6284046"
 # _tag=1326fe9d4c85cca1ee774b072ef4fa337694f2e7
 
 pkgname="ffmpeg"
-pkgver=6.0
-pkgrel=1
+pkgver=5.1.2
+pkgrel=2
 pkgdesc="A complete solution to record, convert and stream audio and video (all possible features for AMD)"
 arch=("x86_64")
 url="https://www.ffmpeg.org/"
@@ -55,6 +55,8 @@ depends=(
   "alsa-lib"
   "avisynthplus"
   "bzip2"
+  "celt"
+  "chromaprint"
   "clang"
   "codec2"
   "cuda"
@@ -141,9 +143,8 @@ depends=(
   "vid.stab"
   "vmaf"
   "vulkan-icd-loader"
-  "x264"
-  "openh264"
-  "x265"
+  # "x264"
+  # "x265"
   "xvidcore"
   "xz"
   "zeromq"
@@ -152,15 +153,15 @@ depends=(
   "zvbi"
   # "openvino"
   # Archiv8 / AUR
-  "celt"
   "davs2"
   # [Fixed]:  2022/05/03 FFMpeg requires shared libraries that are not included within the official, Arch Linux, flite packages. See https://github.com/Archiv8/flite to get flite-all.
   "flite-all"
   "lensfun-git"
   "libklvanc"
   "librist"
+  "openh264"
   "shine"
-  \
+  "uavs3d"
   "vo-amrwbenc"
   "xavs"
   "xavs2"
@@ -168,17 +169,14 @@ depends=(
 makedepends=(
   # Arch Linux official repositories
   "amf-headers"
-  "doxygen"
   "ffnvcodec-headers"
   "git"
   "nasm"
   "opencl-headers"
-  "texinfo"
   "vulkan-headers"
- # Archiv8 / AUR
-  "chromaprint-fftw"
+
+  # Archiv8 / AUR
   "decklink-sdk"
-  "uavs3d"
 )
 optdepends=(
   'avisynthplus: AviSynthPlus support'
@@ -188,16 +186,15 @@ optdepends=(
 )
 provides=(
   "ffmpeg"
-  "ffplay"
-  "ffprobe"
   "libavcodec.so"
   "libavdevice.so"
   "libavfilter.so"
   "libavformat.so"
   "libavutil.so"
   "libpostproc.so"
-  "libswresample.so"
+  "libavresample.so"
   "libswscale.so"
+  "libswresample.so"
 )
 # options=(
 #   "debug"
@@ -205,23 +202,25 @@ provides=(
 source=(
   #"git+https://git.ffmpeg.org/ffmpeg.git"
   "${pkgname}-${pkgver}.tar.xz"::"https://ffmpeg.org/releases/${pkgname}-${pkgver}.tar.xz"
-  # "010-ffmpeg-add-svt-hevc-g${_svt_hevc_ver:0:7}.patch"::"https://raw.githubusercontent.com/OpenVisualCloud/SVT-HEVC/${_svt_hevc_ver}/ffmpeg_plugin/master-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch"
+  "010-ffmpeg-add-svt-hevc-g${_svt_hevc_ver:0:7}.patch::https://raw.githubusercontent.com/OpenVisualCloud/SVT-HEVC/${_svt_hevc_ver}/ffmpeg_plugin/master-0001-lavc-svt_hevc-add-libsvt-hevc-encoder-wrapper.patch"
   # "020-ffmpeg-add-svt-hevc-docs-g${_svt_hevc_ver:0:7}.patch"::"https://raw.githubusercontent.com/OpenVisualCloud/SVT-HEVC/${_svt_hevc_ver}/ffmpeg_plugin/0002-doc-Add-libsvt_hevc-encoder-docs.patch"
-  # "030-ffmpeg-add-svt-vp9-g${_svt_vp9_ver:0:7}.patch"::"https://raw.githubusercontent.com/OpenVisualCloud/SVT-VP9/${_svt_vp9_ver}/ffmpeg_plugin/master-0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch"
+  "030-ffmpeg-add-svt-vp9-g${_svt_vp9_ver:0:7}.patch::https://raw.githubusercontent.com/OpenVisualCloud/SVT-VP9/${_svt_vp9_ver}/ffmpeg_plugin/master-0001-Add-ability-for-ffmpeg-to-run-svt-vp9.patch"
   "040-ffmpeg-add-av_stream_get_first_dts-for-chromium.patch"
   # "050-ffmpeg-vmaf-2.x.patch"
-  # "060-ffmpeg-fix-segfault-with-avisynthplus.patch"
+  "060-ffmpeg-fix-segfault-with-avisynthplus.patch"
   # "070-ffmpeg-libsvtav1-0.9.0-part1.patch"::"https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/c33b4048859a191acf9b6aa22acaea248a4eb18f"
   # "080-ffmpeg-libsvtav1-0.9.0-part2.patch"::"https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/1dddb930aaf0cadaa19f86e81225c9c352745262"
-  # "090-ffmpeg-fix-v4l2-memory-leak.patch"::"https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/30aa0c3f4873a92c5e3da8ba8cf030de56bf4cf7"
-  # "100-ffmpeg-fix-hwcontext_vulkan.patch"::"https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/eb0455d64690eed0068e5cb202f72ecdf899837"
+  "090-ffmpeg-fix-v4l2-memory-leak.patch::https://git.ffmpeg.org/gitweb/ffmpeg.git/patch/30aa0c3f4873a92c5e3da8ba8cf030de56bf4cf7"
   "LICENSE"
-
 )
-
 sha512sums=(
-  '4d0e8f635d5a1633710f30cb3e0a854b6ca3bf85e33a289d1ec7aca2ad55dc4910010bc9cf3f13eee9f6decb9d50a0df6d7aa5a342f308c3868d2730f3a6b980'
+  '04d9ae2a0e9238c469941d2bb9929d59b58f4be3830846cf91b02a440da17803a04b147a4e0168c9ffd6f62ca82187508bc7b53255de9787a97168278e903b9b'
+  '81d94885a8442527ffe8dc76bd68ac93983790c8e6a984016481f3b38c4e0bcfb3d7f53b1a511ac85c347f196c33a10a14f1115ffd5708a12cafa89bb1176e28'
+  '34cf3210192bc963ea9f2ec207a3c7680483d18922712757426f822bbdae62e6bfa92512d27b9314ca671a66632f7a58138a29144ac590d262e5235bde33e8ea'
   'b144d4a68b2cdd4ba8d0fcff34fb93abd17daf016799376ca47a5882251aca4a166202f2680dddad10ec011da93d4257810c5ec57712faf592f89bd6ed512fbe'
+  'ea66800521202425dd1a812c4a9e492083bdcb11ae0d7c099e01525e5a3243a0f20a279b646b3882102d15112cb6794fd183c6831a78832645946fdb339b302a'
+  '8dfefa1133ba39bb338b0667ad390b2bfdfd9a4b59029cff7e0bd9542e1c4c956584056d382a4bd79703dc64e4ea7c6e2bd7376f6ac11e68a9d120f20189534a'
+  'bce2b070e59e62c82650ab52a07446f0479b081a24943682c50af975971126c3623b5387010df9469efe3221ea43bf45d57ea95c63e600bb139a6593e93f2030'
   '828dfc54c10895888adb5373b10be8e39eb47e472a8a4bef632ec2dfa7d8ac79c57c5d51d9548fd8762a85a5f9677076b620903bd8c0cfa2418f790037b626a6'
 )
 # validpgpkeys=(DD1EC9E8DE085C629B3E1846B18E8928B3948D64)
@@ -237,11 +236,11 @@ prepare() {
   # git cherry-pick -n 988f2e9eb063db7c1a678729f58aab6eba59a55b
 
   # [Fixes]: prepare fixes for libsvt_hevc.c and libsvt_vp9.c by removing files
-  # rm -f "${srcdir}/${pkgname}-${pkgver}/libavcodec/libsvt_{hevc,vp9}.c"
+  rm -f "${srcdir}/${pkgname}-${pkgver}/libavcodec/libsvt_{hevc,vp9}.c"
 
   # [Fixes]: AVCodecs are not modified any longer in ffmpeg for "lavc/svt_hevc" add "libsvt hevc" encoder wrapper
-  # echo Patch 1 of 8
-  # patch -d "${srcdir}/${pkgname}-${pkgver}" -Np1 -i "${srcdir}/010-ffmpeg-add-svt-hevc-g${_svt_hevc_ver:0:7}.patch"
+  echo Patch 1 of 8
+  patch -d "${srcdir}/${pkgname}-${pkgver}" -Np1 -i "${srcdir}/010-ffmpeg-add-svt-hevc-g${_svt_hevc_ver:0:7}.patch"
 
   # [Fixes]: Add docs for libsvt_hevc encoder in encoders.texi and general.texi
   # @FixMe Patch fails with, "patch: **** malformed patch at line 177:  @section libtheora"
@@ -249,11 +248,11 @@ prepare() {
   # patch -d "${srcdir}/${pkgname}" -Np1 -i "${srcdir}/020-ffmpeg-add-svt-hevc-docs-g${_svt_hevc_ver:0:7}.patch"
 
   # [Fixes]: Add ability for ffmpeg to run svt vp9
-  # echo Patch 3 of 8
-  # patch -d "${srcdir}/${pkgname}-${pkgver}" -Np1 -i "${srcdir}/030-ffmpeg-add-svt-vp9-g${_svt_vp9_ver:0:7}.patch"
+  echo Patch 3 of 8
+  patch -d "${srcdir}/${pkgname}-${pkgver}" -Np1 -i "${srcdir}/030-ffmpeg-add-svt-vp9-g${_svt_vp9_ver:0:7}.patch"
 
   # [Fixes]: chromium build failure on Chromium 94+,add "av_stream_get_first_dts". See, https://crbug.com/1251779
-  # echo Patch 4 of 8
+  echo Patch 4 of 8
   patch -d "${srcdir}/${pkgname}-${pkgver}" -Np1 -i "${srcdir}/040-ffmpeg-add-av_stream_get_first_dts-for-chromium.patch"
 
   # [Fixes]: vmaf 2.x support. See https://aur.archlinux.org/cgit/aur.git/tree/050-ffmpeg-vmaf-2.x.patch?h=ffmpeg-full
@@ -261,8 +260,8 @@ prepare() {
   # patch -d "${srcdir}/${pkgname}" -Np1 -i "${srcdir}/050-ffmpeg-vmaf-2.x.patch"
 
   # [Fixes]: Fix segmentation fault when using avisynth plus
-  # echo Patch 6 of 8
-  #patch -d "${srcdir}/${pkgname}-${pkgver}" -Np1 -i "${srcdir}/060-ffmpeg-fix-segfault-with-avisynthplus.patch"
+  echo Patch 6 of 8
+  patch -d "${srcdir}/${pkgname}-${pkgver}" -Np1 -i "${srcdir}/060-ffmpeg-fix-segfault-with-avisynthplus.patch"
 
   # [Fixes]: Add a svtav1-params option to pass a list of key=value parameters
   # echo Patch 7 of 8
@@ -273,20 +272,17 @@ prepare() {
   # patch -d "${srcdir}/${pkgname}" -Np1 -i "${srcdir}/080-ffmpeg-libsvtav1-0.9.0-part2.patch"
 
   # [Fixes]: V4L
-  #patch -d "${srcdir}/${pkgname}-${pkgver}" -Np1 -i "${srcdir}/090-ffmpeg-fix-v4l2-memory-leak.patch"
-
-  # [Fixes]: Build errors due to changes in the Khronos Vulkan Headers
-  #patch -d "${srcdir}/${pkgname}-${pkgver}" -Np1 -i "${srcdir}/100-ffmpeg-fix-hwcontext_vulkan.patch"
+  patch -d "${srcdir}/${pkgname}-${pkgver}" -Np1 -i "${srcdir}/090-ffmpeg-fix-v4l2-memory-leak.patch"
 }
 
 build() {
-
+  #
   cd "${srcdir}/${pkgname}-${pkgver}"
 
   printf "%s\n" "-> Running ffmpeg configure script..."
 
   ./configure \
-    --extra-cflags='-I/opt/cuda/include -I/usr/include/libplacebo' \
+    --extra-cflags='-I/opt/cuda/include' \
     --extra-ldflags='-L/opt/cuda/lib64' \
     --logfile="ffbuild/.build-config.log" \
     --enable-logging \
@@ -412,8 +408,6 @@ build() {
     --enable-libvorbis \
     --enable-libvpx \
     --enable-libwebp \
-    --enable-libx264 \
-    --enable-libx265 \
     --enable-libxavs \
     --enable-libxavs2 \
     --enable-libxcb \
@@ -481,6 +475,8 @@ build() {
 
   make doc/ff{mpeg,play}.1
 
+  #    --enable-libx264 \
+  #    --enable-libx265 \
 }
 
 package() {
